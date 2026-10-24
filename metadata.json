@@ -1,0 +1,6 @@
+{
+  "name": "GWN Community Connect",
+  "description": "The official digital hub for Gambians Welfare Nottinghamshire (GWN). Stay connected with community news, access support services, learn about our mission, and contribute to building a stronger future for African heritage communities in Nottinghamshire.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
