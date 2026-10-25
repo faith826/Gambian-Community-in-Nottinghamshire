@@ -58,6 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    document.title = 'Gambian Community';
     setMobileMenuOpen(false);
     setOpenDropdown(null);
     window.scrollTo(0, 0);
