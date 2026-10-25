@@ -383,11 +383,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <span>+44 115 912 3456</span>
                 </a>
                 <a
-                  href="mailto:info@gambiancommunity-notts.org.uk"
+                  href="mailto:info@gambiansnottinghamshire.org.uk"
                   className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
                 >
                   <Mail className="w-4 h-4 text-[var(--gwn-green)]" />
-                  <span>info@gambiancommunity-notts.org.uk</span>
+                  <span>info@gambiansnottinghamshire.org.uk</span>
                 </a>
               </div>
             </div>

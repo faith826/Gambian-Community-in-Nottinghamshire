@@ -104,7 +104,7 @@ export function Team() {
                     <p className="text-gray-700 leading-relaxed mb-6">{member.bio}</p>
                     <div className="flex gap-4">
                       <a
-                        href="mailto:info@gwn-notts.org.uk"
+                        href="mailto:info@gambiansnottinghamshire.org.uk"
                         className="flex items-center gap-2 text-[var(--gwn-red)] hover:text-[var(--gwn-blue)] font-medium transition-colors"
                       >
                         <Mail className="w-4 h-4" />
@@ -140,7 +140,7 @@ export function Team() {
               offer a few hours a month or want to take on a larger role, your contribution makes a
               difference.
             </p>
-            <a href="mailto:info@gwn-notts.org.uk?subject=Volunteer%20Inquiry">
+            <a href="mailto:info@gambiansnottinghamshire.org.uk?subject=Volunteer%20Inquiry">
               <button
                 type="button"
                 className="bg-white text-[var(--gwn-red)] hover:bg-gray-100 px-8 py-4 rounded-lg text-lg font-bold transition-all duration-300 hover:shadow-xl cursor-pointer"
