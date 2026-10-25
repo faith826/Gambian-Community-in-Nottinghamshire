@@ -17,18 +17,20 @@ export interface MenuItem {
 export const navigationMenu: MenuItem[] = [
   { title: 'Home', url: '/' },
   {
-    title: 'About',
+    title: 'About Us',
     url: '/About',
     subItems: [
+      { title: 'About', url: '/About' },
       { title: 'Community', url: '/Community' },
       { title: 'Services', url: '/Services' },
       { title: 'Teams', url: '/Team' },
     ],
   },
   {
-    title: 'Impact',
+    title: 'Our Impact',
     url: '/Impact',
     subItems: [
+      { title: 'Impact', url: '/Impact' },
       { title: 'News', url: '/News' },
     ],
   },
@@ -39,11 +41,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({
-    About: true,
-    Impact: true,
+    'About Us': true,
+    'Our Impact': true,
   });
   const [scrolled, setScrolled] = useState(false);
   const dropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -59,6 +62,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
     setOpenDropdown(null);
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const isExactActive = (url: string) => {
     const path = location.pathname.toLowerCase();
@@ -113,129 +127,144 @@ export function Layout({ children }: { children: React.ReactNode }) {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            {/* Logo and Name */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f7063e689f82900f12f15b/6639afab7_Gambianlogo.png"
-                alt="Gambian Community Logo"
-                className="h-14 w-auto object-contain group-hover:scale-105 transition-transform"
-              />
-              <div>
-                <h1 className="font-bold text-gray-900 text-lg leading-tight group-hover:text-[var(--gwn-red)] transition-colors">
-                  Gambian Community in Nottinghamshire
-                </h1>
-                <p className="text-xs text-gray-600 font-medium">Building Unity, Creating Opportunities</p>
-              </div>
-            </Link>
+          <div className="flex items-center justify-between py-4 gap-4">
+            {/* Left: Logo & Name */}
+            <div className="flex-shrink-0 z-10">
+              <Link to="/" className="flex items-center gap-3 group">
+                <img
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f7063e689f82900f12f15b/6639afab7_Gambianlogo.png"
+                  alt="Gambian Community Logo"
+                  className="h-14 w-auto object-contain group-hover:scale-105 transition-transform"
+                />
+                <div className="hidden sm:block">
+                  <h1 className="font-bold text-gray-900 text-lg leading-tight group-hover:text-[var(--gwn-red)] transition-colors">
+                    Gambian Community in Nottinghamshire
+                  </h1>
+                  <p className="text-xs text-gray-600 font-medium">Building Unity, Creating Opportunities</p>
+                </div>
+              </Link>
+            </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-7">
-              {navigationMenu.map((item) => {
-                const parentActive = isParentActive(item);
-                const hasSub = item.subItems && item.subItems.length > 0;
+            {/* Center: Desktop Navigation Menu */}
+            <nav
+              ref={navRef}
+              className="hidden lg:flex items-center justify-center flex-1 px-4 xl:px-8"
+              aria-label="Main Navigation"
+            >
+              <div className="flex items-center gap-7 xl:gap-9">
+                {navigationMenu.map((item) => {
+                  const parentActive = isParentActive(item);
+                  const hasSub = item.subItems && item.subItems.length > 0;
 
-                if (!hasSub) {
-                  return (
-                    <Link
-                      key={item.title}
-                      to={item.url}
-                      className={`text-sm font-medium transition-colors hover:text-[var(--gwn-red)] ${
-                        parentActive ? 'text-[var(--gwn-red)] font-semibold' : 'text-gray-700'
-                      }`}
-                    >
-                      {item.title}
-                    </Link>
-                  );
-                }
-
-                const isDropdownOpen = openDropdown === item.title;
-
-                return (
-                  <div
-                    key={item.title}
-                    className="relative"
-                    onMouseEnter={() => handleMouseEnter(item.title)}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <div className="flex items-center gap-1 py-2">
+                  if (!hasSub) {
+                    return (
                       <Link
+                        key={item.title}
                         to={item.url}
-                        className={`text-sm font-medium transition-colors hover:text-[var(--gwn-red)] ${
+                        className={`text-sm font-medium transition-colors hover:text-[var(--gwn-red)] relative py-2 ${
                           parentActive ? 'text-[var(--gwn-red)] font-semibold' : 'text-gray-700'
                         }`}
                       >
                         {item.title}
+                        {parentActive && (
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--gwn-red)] rounded-full" />
+                        )}
                       </Link>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setOpenDropdown(isDropdownOpen ? null : item.title);
-                        }}
-                        aria-expanded={isDropdownOpen}
-                        className={`p-0.5 rounded transition-transform text-gray-500 hover:text-[var(--gwn-red)] ${
-                          isDropdownOpen ? 'rotate-180 text-[var(--gwn-red)]' : ''
-                        }`}
-                        aria-label={`Toggle ${item.title} submenu`}
-                      >
-                        <ChevronDown className="w-4 h-4" />
-                      </button>
-                    </div>
+                    );
+                  }
 
-                    {/* Submenu Dropdown */}
-                    {isDropdownOpen && (
-                      <div className="absolute top-full left-0 pt-1 z-50 min-w-[210px] animate-in fade-in slide-in-from-top-1 duration-150">
-                        <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden ring-1 ring-black/5">
-                          {item.subItems?.map((sub) => {
-                            const subActive = isExactActive(sub.url);
-                            return (
-                              <Link
-                                key={sub.title}
-                                to={sub.url}
-                                onClick={() => setOpenDropdown(null)}
-                                className={`block px-4 py-2.5 text-sm transition-colors ${
-                                  subActive
-                                    ? 'bg-red-50 text-[var(--gwn-red)] font-semibold border-l-4 border-[var(--gwn-red)]'
-                                    : 'text-gray-700 hover:bg-gray-50 hover:text-[var(--gwn-red)]'
-                                }`}
-                              >
-                                {sub.title}
-                              </Link>
-                            );
-                          })}
-                        </div>
+                  const isDropdownOpen = openDropdown === item.title;
+
+                  return (
+                    <div
+                      key={item.title}
+                      className="relative"
+                      onMouseEnter={() => handleMouseEnter(item.title)}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <div className="flex items-center gap-1 py-2 cursor-pointer group">
+                        <Link
+                          to={item.url}
+                          onClick={() => setOpenDropdown(null)}
+                          className={`text-sm font-medium transition-colors hover:text-[var(--gwn-red)] ${
+                            parentActive ? 'text-[var(--gwn-red)] font-semibold' : 'text-gray-700'
+                          }`}
+                        >
+                          {item.title}
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setOpenDropdown(isDropdownOpen ? null : item.title);
+                          }}
+                          aria-expanded={isDropdownOpen}
+                          className={`p-0.5 rounded transition-transform text-gray-500 hover:text-[var(--gwn-red)] ${
+                            isDropdownOpen ? 'rotate-180 text-[var(--gwn-red)]' : ''
+                          }`}
+                          aria-label={`Toggle ${item.title} submenu`}
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </button>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
 
-              {/* Preserved Donation Button */}
-              <Link to="/CentreProject">
+                      {/* Floating Submenu Dropdown */}
+                      {isDropdownOpen && (
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1.5 z-50 min-w-[210px] animate-in fade-in slide-in-from-top-1 duration-150">
+                          <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 overflow-hidden ring-1 ring-black/5">
+                            {item.subItems?.map((sub) => {
+                              const subActive = isExactActive(sub.url);
+                              return (
+                                <Link
+                                  key={sub.title}
+                                  to={sub.url}
+                                  onClick={() => setOpenDropdown(null)}
+                                  className={`block px-4 py-2.5 text-sm transition-colors ${
+                                    subActive
+                                      ? 'bg-red-50 text-[var(--gwn-red)] font-semibold border-l-4 border-[var(--gwn-red)]'
+                                      : 'text-gray-700 hover:bg-gray-50 hover:text-[var(--gwn-red)]'
+                                  }`}
+                                >
+                                  {sub.title}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </nav>
+
+            {/* Right: Preserved Donate Button & Mobile Hamburger */}
+            <div className="flex items-center gap-3 flex-shrink-0 z-10">
+              <Link to="/CentreProject" className="hidden lg:inline-block">
                 <Button className="bg-[var(--gwn-red)] hover:bg-[#b00e1f] text-white gap-2 shadow-sm font-semibold px-5 py-2">
                   <Heart className="w-4 h-4 fill-white text-white" />
                   Donate
                 </Button>
               </Link>
-            </nav>
 
-            {/* Mobile Hamburger Button */}
-            <button
-              type="button"
-              className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg focus:outline-none"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              {/* Mobile Hamburger Button */}
+              <button
+                type="button"
+                className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg focus:outline-none"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle navigation menu"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
           <div className="lg:hidden bg-white border-t border-gray-200 shadow-xl max-h-[80vh] overflow-y-auto">
-            <nav className="px-4 py-4 space-y-1.5">
+            <nav className="px-4 py-4 space-y-2">
               {navigationMenu.map((item) => {
                 const parentActive = isParentActive(item);
                 const hasSub = item.subItems && item.subItems.length > 0;
@@ -275,7 +304,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       <button
                         type="button"
                         onClick={(e) => toggleMobileSubmenu(item.title, e)}
-                        className="p-1 rounded text-gray-500 hover:text-gray-800"
+                        className="p-1.5 rounded text-gray-500 hover:text-gray-800 focus:outline-none"
                         aria-label={`Toggle ${item.title} submenu`}
                       >
                         <ChevronDown
@@ -288,7 +317,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
                     {/* Submenu on mobile */}
                     {isExpanded && (
-                      <div className="bg-white py-1 pl-4 pr-2 space-y-1 border-t border-gray-100">
+                      <div className="bg-white py-1.5 pl-4 pr-2 space-y-1 border-t border-gray-100">
                         {item.subItems?.map((sub) => {
                           const subActive = isExactActive(sub.url);
                           return (
@@ -388,7 +417,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </li>
                 <li>
                   <Link to="/Impact" className="text-gray-400 hover:text-white transition-colors">
-                    Impact
+                    Our Impact
                   </Link>
                 </li>
                 <li>
