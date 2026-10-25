@@ -21,6 +21,8 @@ export default function App() {
           <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/About" element={<About />} />
           <Route path="/about" element={<About />} />
+          <Route path="/AboutUs" element={<About />} />
+          <Route path="/about-us" element={<About />} />
           <Route path="/Community" element={<Community />} />
           <Route path="/community" element={<Community />} />
           <Route path="/Services" element={<Services />} />
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="/teams" element={<Team />} />
           <Route path="/Impact" element={<Impact />} />
           <Route path="/impact" element={<Impact />} />
+          <Route path="/OurImpact" element={<Impact />} />
+          <Route path="/our-impact" element={<Impact />} />
           <Route path="/CentreProject" element={<CentreProject />} />
           <Route path="/centreproject" element={<CentreProject />} />
           <Route path="/centre-project" element={<CentreProject />} />
